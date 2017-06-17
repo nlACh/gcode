@@ -44,6 +44,7 @@ void processCommand(String str)
   if(str.charAt(0)=='G')
   {
     int c1=str.substring(1,3).toInt();
+    Serial.print(c1);
     Serial.print('\n');
     switch(c1)
     {
@@ -62,13 +63,14 @@ void processCommand(String str)
   if(str.charAt(0)=='M')
   {
     int c1=str.substring(1,4).toInt();
+    Serial.print(c1);
     Serial.print('\n');
     switch(c1)
     {
-      case 18: Serial.print("disable motors\n");
-               break;
+      case 18:  Serial.print("disable motors\n");
+                break;
 
-      case 100: ;
+      case 100: //help();
                 break;
 
       case 114: Serial.print("Report position and feedrate");

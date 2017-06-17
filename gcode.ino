@@ -1,7 +1,7 @@
 #include <String.h>
 #include "processor.h"
 #include "help.h"
-#include "sready.h"
+
 
 #define BAUD 57600 //define speed of communication
 #define MAX_BUF 64 //max length of message arduino can store
@@ -13,7 +13,7 @@ void setup()
 {
   Serial.begin(BAUD);
   help();
-  sready(sofar);
+  sready();
 }
 
 /**
@@ -35,7 +35,7 @@ void loop()
 	else
 	{
 		Serial.print(F("Buffer Overflow!!"));
-		sready(sofar);
+		sready();
 		break;
 	}
 	
@@ -48,8 +48,14 @@ void loop()
       buffer[sofar-1]=0;
       String cmd = String(buffer);
       processCommand(cmd); // do something with the command
-      sready(sofar);
+      sready();
     }
   }
+}
+
+void sready()
+{
+  sofar=0;
+  Serial.println(F("> "));
 }
 
