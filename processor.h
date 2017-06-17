@@ -38,33 +38,55 @@ void processCommand() {
   // if the string has no G or M commands it will get here and the Arduino will silently ignore it
 }
 */
+extern int x, y, f;
+int x, y, f;
+int cx, cy, cf;
+
 void processCommand(String str)
 {
   //Looking for commands that start with G:
   if(str.charAt(0)=='G')
   {
     int c1=str.substring(1,3).toInt();
-    Serial.print(c1);
-    Serial.print('\n');
     switch(c1)
     {
       case 00: Serial.print("Absolute ModeXY\n");
+               cx=str.indexOf('X');
+               cy=str.indexOf('Y');
+               cf=str.indexOf('F');
+               x=str.substring(cx+1, cy).toInt();
+               y=str.substring(cy+1, cf).toInt();
+               f=str.substring(cf+1).toInt();
+               Serial.println(x);
+               Serial.println(y);
+               Serial.println(f);
                break;
 
       case 01: Serial.print("Relative ModeXY\n");
+               break;
+
+      case 02: //clockwise arc
+               break;
+
+      case 03: //anti-clockwise arc
+               break;
+
+      case 04: //pause
                break;
 
       case 90: Serial.print("abs\n");
                break;
                
       case 91: Serial.print("rel\n");
+               break;
+
+      case 92: //set position
+               break;
     }
   }
   if(str.charAt(0)=='M')
   {
     int c1=str.substring(1,4).toInt();
-    Serial.print(c1);
-    Serial.print('\n');
     switch(c1)
     {
       case 18:  Serial.print("disable motors\n");
@@ -73,7 +95,12 @@ void processCommand(String str)
       case 100: //help();
                 break;
 
-      case 114: Serial.print("Report position and feedrate");
+      case 114: Serial.println("I am at: ");
+                Serial.print(x);
+                Serial.print(',');
+                Serial.println(y);
+                Serial.print("Feedrate: ");
+                Serial.println(f);
                 break;
     }
   }

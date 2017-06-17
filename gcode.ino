@@ -1,7 +1,6 @@
 #include <String.h>
-#include "processor.h"
 #include "help.h"
-
+#include "processor.h"
 
 #define BAUD 57600 //define speed of communication
 #define MAX_BUF 64 //max length of message arduino can store

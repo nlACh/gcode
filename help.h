@@ -1,7 +1,7 @@
 /**
  * display helpful information
  */
-#define VERSION 0.2
+#define VERSION 0.21
 void help() {
   Serial.print(F("CNC Robot "));
   Serial.println(VERSION);
