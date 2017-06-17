@@ -1,4 +1,5 @@
 #include <String.h>
+#include "processor.h"
 
 #define BAUD 57600 //define speed of communication
 #define MAX_BUF 64 //max length of message arduino can store
@@ -79,31 +80,4 @@ void sready()
   Serial.print(F("> ")); // signal ready to receive input
 }
 
-void processCommand(String str)
-{
-  //Looking for commands that start with G:
-  if(str.charAt(0)=='G')
-  {
-    int c1=str.substring(1,3).toInt();
-    Serial.print(c1);
-    Serial.print('\n');
-    switch(c1)
-    {
-      case 00: Serial.print("Absolute ModeXY");
-               break;
-
-      case 01: Serial.print("Relative ModeXY");
-               break;
-
-      case 90: Serial.print("abs");
-               break;
-               
-      case 91: Serial.print("rel");
-    }
-  }
-  if(str.charAt(0)=='M')
-  {
-    
-  }
-}
 

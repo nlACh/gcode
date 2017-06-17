@@ -38,3 +38,43 @@ void processCommand() {
   // if the string has no G or M commands it will get here and the Arduino will silently ignore it
 }
 */
+void processCommand(String str)
+{
+  //Looking for commands that start with G:
+  if(str.charAt(0)=='G')
+  {
+    int c1=str.substring(1,3).toInt();
+    Serial.print('\n');
+    switch(c1)
+    {
+      case 00: Serial.print("Absolute ModeXY\n");
+               break;
+
+      case 01: Serial.print("Relative ModeXY\n");
+               break;
+
+      case 90: Serial.print("abs\n");
+               break;
+               
+      case 91: Serial.print("rel\n");
+    }
+  }
+  if(str.charAt(0)=='M')
+  {
+    int c1=str.substring(1,4).toInt();
+    Serial.print('\n');
+    switch(c1)
+    {
+      case 18: Serial.print("disable motors\n");
+               break;
+
+      case 100: help();
+                break;
+
+      case 114: Serial.print("Report position and feedrate");
+                break;
+    }
+  }
+}
+
+
