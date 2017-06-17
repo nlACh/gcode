@@ -68,7 +68,7 @@ void processCommand(String str)
       case 18: Serial.print("disable motors\n");
                break;
 
-      case 100: help();
+      case 100: ;
                 break;
 
       case 114: Serial.print("Report position and feedrate");
