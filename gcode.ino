@@ -1,9 +1,13 @@
-#include <Stepper.h>
+#include <AccelStepper.h>
+//search for modified code with ACCEL::
+//Switching to AccelStepper library
+//hoping to control 2 motors simultaneously...
+#include <MultiStepper.h>//this baby can handle upto 10 motors
 #include <Servo.h>
 #include <String.h>
 
 //version number
-#define VERSION 0.6
+#define VERSION 0.6a
 
 //steps per revolution SPR of motors used
 //change this when changing motors
@@ -16,9 +20,10 @@ char buffer[MAX_BUF];
 int sofar=0, i=0; //how much is in the buffer
 //a check to disable motors
 bool disabled=false;
-
-Stepper sX(SPR, 2, 4, 3, 5); //X axis is the one woefully lying on the ground apparently
-Stepper sY(SPR, 8, 10, 9, 11); //Y axis is the one hnging on the beams
+//ACCEL::
+AccelStepper sX(AccelStepper::FULL4WIRE, 2, 4, 3, 5); //X axis is the one woefully lying on the ground apparently
+AccelStepper sY(AccelStepper::FULL4WIRE, 8, 10, 9, 11); //Y axis is the one hnging on the beams
+MultiStepper steppers;
 
 /**
  * Changing the params of the struct can allow operation in Z axis too
@@ -62,6 +67,15 @@ void setup()
   P2.Y=0.0;
   P2.F=0;
   Serial.begin(BAUD);
+  //configure each stepper
+  //ACCEL::
+  sX.setMaxSpeed(250);
+  sY.setMaxSpeed(250);
+  //ACCEL::
+  //Give the steppers to multiStepper to manage
+  steppers.addStepper(sX);
+  steppers.addStepper(sY);
+  
   help();
   sready();
   /**
@@ -69,7 +83,7 @@ void setup()
    * desired coords, including origin
    * origin();
    */
-  move(0.0,0.0);
+  //move(0.0,0.0);
 }
 
 /**
@@ -256,10 +270,13 @@ void processCommand(String str)
 //Function to draw lines
 void move()
 {
-	//Do something awesome
-	float mx = P1.X-P2.X;
-	float my = P1.Y-P2.Y;
+  float pos[2];
+	//Doing something awesome
+	pos[0] = P1.X-P2.X;
+	pos[1] = P1.Y-P2.Y;
   Serial.println("moving...");
+  //ACCEL::
+  //replace the following code
 	sX.setSpeed(P1.F);
 	sY.setSpeed(P1.F);
 	sX.step(mx);
@@ -269,8 +286,11 @@ void move()
 //absolute move to coords
 void move(float x, float y)
 {
-  float mx = x-P2.X;
-  float my = y-P2.Y;
+  float pos[2];
+  pos[0] = x-P2.X;
+  pos[1] = y-P2.Y;
+  //ACCEL::
+  //replace the following code
   sX.step(mx);
   sY.step(my);
 }
