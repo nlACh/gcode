@@ -2,7 +2,7 @@
 #include <String.h>
 
 //version number
-#define VERSION 0.3
+#define VERSION 0.5
 
 //steps per revolution SPR of motors used
 //change this when changing motors
@@ -31,23 +31,28 @@ struct index
 	int cf;
 };
 
-struct point P1;
-//P2 will store the previous values
-//steps required will be calculated w.r.t P2
-//P2 initialized with 0,0,0
-struct point P2;
-P2.X=0;
-P2.Y=0;
-P2.F=0;
+point P1;
 
-//finding the index of X and Y and F in GCODE command
-//better organization is possible with structs apparently
-//but the data structure can/may change...
+/**P2 will store the previous values
+steps required will be calculated w.r.t P2
+P2 initialized with 0,0,0 */
+point P2;
+
+/**finding the index of X and Y and F in GCODE command
+better organization is possible with structs apparently
+but the data structure can/may change... */
 struct index in1;
 
 //this setup will run only once
 void setup() 
 {
+  /**assigning values to elements of struct
+   * must be done within a function
+   * Otherwise there will be "does not name a type" error
+   */
+  P2.X=0.0;
+  P2.Y=0.0;
+  P2.F=0;
   Serial.begin(BAUD);
   help();
   sready();
@@ -57,7 +62,7 @@ void setup()
 	 it will be different from sready() in the sense that
 	 the buffer will remain unaffected. sready() prepares
 	 for receiving next command only... **/
-  initX();
+  origin();
 }
 
 /**
@@ -103,11 +108,19 @@ void sready()
   Serial.println(F("> "));
 }
 
-//an init command apart from gcode defined ones
-void initX()
+/**An init command apart from gcode defined ones
+takes the head to origin of the coord system*/
+void origin()
 {
-	//Do something awesome
+	if(P2.X!=0.0 || P2.Y!=0.0)
+	{
+		sX.setSpeed(P1.F);
+		sY.setSpeed(P1.F);
+		sX.step(-P1.X);
+		sY.step(-P1.Y);
+	}
 }
+
 /**
  * display helpful information
  */
@@ -134,28 +147,25 @@ void processCommand(String str)
   if(str.charAt(0)=='G')
   {
     int c1=str.substring(1,3).toInt();
+    int P,d; //for pause since we cannot declare variables in switch cases
     switch(c1)
     {
-      case 00: Serial.print("Absolute ModeXY\n");
-               in1.cx=str.indexOf('X');
+      case 00: //Serial.println(P1.X);
+               //Serial.println(P1.Y);
+               //Serial.println(P1.F);
+			         //get some function to draw/move the header
+			         break;
+
+      case 01: in1.cx=str.indexOf('X');
                in1.cy=str.indexOf('Y');
                in1.cf=str.indexOf('F');
                P1.X=str.substring(in1.cx+1, in1.cy).toFloat();
                P1.Y=str.substring(in1.cy+1, in1.cf).toFloat();
                P1.F=str.substring(in1.cf+1).toInt();
-               Serial.println(P1.X);
-               Serial.println(P1.Y);
-               Serial.println(P1.F);
-			   //get some function to draw/move the header
-			   foo();
-			   //gets the coords into P2 for reference in next steps
-			   P2=P1;
-               break;
-			   //there's a mistake though
-			   //the above code should be in
-			   //case 01:
-
-      case 01: Serial.print("Relative ModeXY\n");
+			         move();
+               origin();
+			         //gets the coords into P2 for reference in next steps
+			         //P2=P1;
                break;
 
       case 02: //clockwise arc
@@ -164,7 +174,14 @@ void processCommand(String str)
       case 03: //anti-clockwise arc
                break;
 
-      case 04: //pause
+      case 04: Serial.println("Wait");
+               P=str.indexOf('P');
+               d = str.substring(P+1).toInt();
+               Serial.print("P at... ");
+               Serial.println(P);
+               Serial.print("waiting for ");
+               Serial.println(d);
+               delay(d);
                break;
 
       case 90: Serial.print("abs\n");
@@ -183,10 +200,10 @@ void processCommand(String str)
     int c1=str.substring(1,4).toInt();
     switch(c1)
     {
-      case 18:  Serial.print("disable motors\n");
+      case 18:  Serial.println("disable motors");
                 break;
 
-      case 100: //help();
+      case 100: help();
                 break;
 
       case 114: Serial.println("I am at: ");
@@ -196,11 +213,43 @@ void processCommand(String str)
                 Serial.print("Feedrate: ");
                 Serial.println(P1.F);
                 break;
+
+      case 300: Serial.println("Pen UP/DOWN");
+                int cs = str.indexOf('S');
+                float val = str.substring(cs+1).toFloat();
+                if(val==50.0)
+                {
+                  Serial.println(val);
+                  penUp();
+                }
+                else if(val==30.0)
+                {
+                  Serial.println(val);
+                  penDown();                
+                }
     }
   }
 }
 
-void foo()
+//Function to draw lines
+void move()
 {
 	//Do something awesome
+	float mx = P1.X-P2.X;
+	float my = P1.Y-P2.Y;
+  Serial.println("moving...");
+	sX.setSpeed(P1.F);
+	sY.setSpeed(P1.F);
+	sX.step(mx);
+	sY.step(my);
+}
+
+void penUp()
+{
+  Serial.println("Pen Up");
+}
+
+void penDown()
+{
+  Serial.println("Pen Down");
 }
