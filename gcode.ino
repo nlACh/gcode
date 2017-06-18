@@ -1,8 +1,9 @@
 #include <Stepper.h>
+#include <Servo.h>
 #include <String.h>
 
 //version number
-#define VERSION 0.5
+#define VERSION 0.6
 
 //steps per revolution SPR of motors used
 //change this when changing motors
@@ -13,10 +14,17 @@
 
 char buffer[MAX_BUF];
 int sofar=0, i=0; //how much is in the buffer
+//a check to disable motors
+bool disabled=false;
 
-Stepper sX(SPR, 2, 4, 3, 5);
-Stepper sY(SPR, 8, 10, 9, 11);
+Stepper sX(SPR, 2, 4, 3, 5); //X axis is the one woefully lying on the ground apparently
+Stepper sY(SPR, 8, 10, 9, 11); //Y axis is the one hnging on the beams
 
+/**
+ * Changing the params of the struct can allow operation in Z axis too
+ * We will need z position and another motor/controller.
+ * Plus an arduino with more I/O pins. It would be awesome to address the motors somehow by I2C
+ */
 struct point
 {
   float X;
@@ -56,13 +64,12 @@ void setup()
   Serial.begin(BAUD);
   help();
   sready();
-  /**thinking of adding an init function that will move
-	 the header to the origin position if it is already
-	 not there...
-	 it will be different from sready() in the sense that
-	 the buffer will remain unaffected. sready() prepares
-	 for receiving next command only... **/
-  origin();
+  /**
+   * An absolute move function to move header to
+   * desired coords, including origin
+   * origin();
+   */
+  move(0.0,0.0);
 }
 
 /**
@@ -108,18 +115,23 @@ void sready()
   Serial.println(F("> "));
 }
 
-/**An init command apart from gcode defined ones
-takes the head to origin of the coord system*/
-void origin()
-{
-	if(P2.X!=0.0 || P2.Y!=0.0)
-	{
-		sX.setSpeed(P1.F);
-		sY.setSpeed(P1.F);
-		sX.step(-P1.X);
-		sY.step(-P1.Y);
-	}
-}
+/**
+ * An init command apart from gcode defined ones
+ * takes the head to origin of the coord system
+ * void origin()
+ * {
+ *     Serial.print(P2.X);Serial.println(P2.Y);
+ *     sX.setSpeed(P2.F);
+ *     sY.setSpeed(P2.F);
+ *     sX.step(-P2.X);
+ *     sY.step(-P2.Y);
+ * 
+ *  } 
+ *This has been superceeded by the move(x,y) function
+ *which can also be executed by 'G92X[]Y[]' GCODE
+ *Note that there has been use of polymorphism in case of
+ *this move() function.(See way down the code to understand...)
+ */
 
 /**
  * display helpful information
@@ -138,16 +150,17 @@ void help()
   Serial.println(F("M18; - disable motors"));
   Serial.println(F("M100; - this help message"));
   Serial.println(F("M114; - report position and feedrate"));
+  Serial.println(F("M300; - pen Up/Down control S50 for up and S30 for down"));
 }
 
 //process the GCODE command that is thrown
 void processCommand(String str)
 {
   //Looking for commands that start with G:
-  if(str.charAt(0)=='G')
+  if(str.charAt(0)=='G' || str.charAt(0)=='g')
   {
     int c1=str.substring(1,3).toInt();
-    int P,d; //for pause since we cannot declare variables in switch cases
+    //int P,d; //for pause since we cannot declare variables in switch cases
     switch(c1)
     {
       case 00: //Serial.println(P1.X);
@@ -163,9 +176,8 @@ void processCommand(String str)
                P1.Y=str.substring(in1.cy+1, in1.cf).toFloat();
                P1.F=str.substring(in1.cf+1).toInt();
 			         move();
-               origin();
 			         //gets the coords into P2 for reference in next steps
-			         //P2=P1;
+			         P2=P1;
                break;
 
       case 02: //clockwise arc
@@ -174,14 +186,15 @@ void processCommand(String str)
       case 03: //anti-clockwise arc
                break;
 
-      case 04: Serial.println("Wait");
+      case 04: int P,d;
+               Serial.println("Wait");
                P=str.indexOf('P');
                d = str.substring(P+1).toInt();
                Serial.print("P at... ");
                Serial.println(P);
                Serial.print("waiting for ");
-               Serial.println(d);
                delay(d);
+               Serial.println(d);
                break;
 
       case 90: Serial.print("abs\n");
@@ -190,17 +203,26 @@ void processCommand(String str)
       case 91: Serial.print("rel\n");
                break;
 
-      case 92: //set position
+      case 92: in1.cx=str.indexOf('X');
+               in1.cy=str.indexOf('Y');
+               P1.X=str.substring(in1.cx+1, in1.cy).toFloat();
+               P1.Y=str.substring(in1.cy+1, in1.cf).toFloat();
+               move(P1.X,P1.Y);
                break;
     }
   }
   
-  if(str.charAt(0)=='M')
+  if(str.charAt(0)=='M' || str.charAt(0)=='m')
   {
     int c1=str.substring(1,4).toInt();
     switch(c1)
     {
-      case 18:  Serial.println("disable motors");
+      case 18:  Serial.println("disabling motors...");
+                for(int i=2; i<=5; i++)
+                  digitalWrite(i,LOW);
+                for(int j=8; j<=11; j++)
+                  digitalWrite(j,LOW);
+                disabled=true;
                 break;
 
       case 100: help();
@@ -244,12 +266,23 @@ void move()
 	sY.step(my);
 }
 
+//absolute move to coords
+void move(float x, float y)
+{
+  float mx = x-P2.X;
+  float my = y-P2.Y;
+  sX.step(mx);
+  sY.step(my);
+}
+
 void penUp()
 {
   Serial.println("Pen Up");
+  //coming later when I get a servo
 }
 
 void penDown()
 {
   Serial.println("Pen Down");
+  //read the above comment
 }
