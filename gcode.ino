@@ -7,24 +7,24 @@
 #include <String.h>
 
 //version number
-#define VERSION 0.6a
+#define VERSION 0.605
 
 //steps per revolution SPR of motors used
 //change this when changing motors
 #define SPR 64
 
-#define BAUD 57600 //define speed of communication
+#define BAUD 115200 //define speed of communication
 #define MAX_BUF 64 //max length of message arduino can store
 
 char buffer[MAX_BUF];
-int sofar=0, i=0; //how much is in the buffer
+long sofar=0, i=0; //how much is in the buffer
 //a check to disable motors
 bool disabled=false;
 //ACCEL::
 AccelStepper sX(AccelStepper::FULL4WIRE, 2, 4, 3, 5); //X axis is the one woefully lying on the ground apparently
 AccelStepper sY(AccelStepper::FULL4WIRE, 8, 10, 9, 11); //Y axis is the one hnging on the beams
-MultiStepper steppers;
 
+MultiStepper s;
 /**
  * Changing the params of the struct can allow operation in Z axis too
  * We will need z position and another motor/controller.
@@ -32,16 +32,16 @@ MultiStepper steppers;
  */
 struct point
 {
-  float X;
-  float Y;
-  int F;
+  long X;
+  long Y;
+  long F;
 };
 
 struct index
 {
-	int cx;
-	int cy;
-	int cf;
+	long cx;
+	long cy;
+	long cf;
 };
 
 point P1;
@@ -69,13 +69,15 @@ void setup()
   Serial.begin(BAUD);
   //configure each stepper
   //ACCEL::
-  sX.setMaxSpeed(250);
-  sY.setMaxSpeed(250);
+  sX.setMaxSpeed(100);
+  //sX.setAcceleration(60);
+  sY.setMaxSpeed(100);
+  //sY.setAcceleration(60);
   //ACCEL::
   //Give the steppers to multiStepper to manage
-  steppers.addStepper(sX);
-  steppers.addStepper(sY);
-  
+  s.addStepper(sX);
+  s.addStepper(sY);
+  //more later
   help();
   sready();
   /**
@@ -173,8 +175,8 @@ void processCommand(String str)
   //Looking for commands that start with G:
   if(str.charAt(0)=='G' || str.charAt(0)=='g')
   {
-    int c1=str.substring(1,3).toInt();
-    //int P,d; //for pause since we cannot declare variables in switch cases
+    long c1=str.substring(1,3).toInt();
+    //long P,d; //for pause since we cannot declare variables in switch cases
     switch(c1)
     {
       case 00: //Serial.println(P1.X);
@@ -186,8 +188,8 @@ void processCommand(String str)
       case 01: in1.cx=str.indexOf('X');
                in1.cy=str.indexOf('Y');
                in1.cf=str.indexOf('F');
-               P1.X=str.substring(in1.cx+1, in1.cy).toFloat();
-               P1.Y=str.substring(in1.cy+1, in1.cf).toFloat();
+               P1.X=str.substring(in1.cx+1, in1.cy).toInt();
+               P1.Y=str.substring(in1.cy+1, in1.cf).toInt();
                P1.F=str.substring(in1.cf+1).toInt();
 			         move();
 			         //gets the coords into P2 for reference in next steps
@@ -200,7 +202,7 @@ void processCommand(String str)
       case 03: //anti-clockwise arc
                break;
 
-      case 04: int P,d;
+      case 04: long P,d;
                Serial.println("Wait");
                P=str.indexOf('P');
                d = str.substring(P+1).toInt();
@@ -219,8 +221,8 @@ void processCommand(String str)
 
       case 92: in1.cx=str.indexOf('X');
                in1.cy=str.indexOf('Y');
-               P1.X=str.substring(in1.cx+1, in1.cy).toFloat();
-               P1.Y=str.substring(in1.cy+1, in1.cf).toFloat();
+               P1.X=str.substring(in1.cx+1, in1.cy).toInt();
+               P1.Y=str.substring(in1.cy+1, in1.cf).toInt();
                move(P1.X,P1.Y);
                break;
     }
@@ -228,13 +230,13 @@ void processCommand(String str)
   
   if(str.charAt(0)=='M' || str.charAt(0)=='m')
   {
-    int c1=str.substring(1,4).toInt();
+    long c1=str.substring(1,4).toInt();
     switch(c1)
     {
       case 18:  Serial.println("disabling motors...");
-                for(int i=2; i<=5; i++)
+                for(long i=2; i<=5; i++)
                   digitalWrite(i,LOW);
-                for(int j=8; j<=11; j++)
+                for(long j=8; j<=11; j++)
                   digitalWrite(j,LOW);
                 disabled=true;
                 break;
@@ -251,8 +253,8 @@ void processCommand(String str)
                 break;
 
       case 300: Serial.println("Pen UP/DOWN");
-                int cs = str.indexOf('S');
-                float val = str.substring(cs+1).toFloat();
+                long cs = str.indexOf('S');
+                long val = str.substring(cs+1).toInt();
                 if(val==50.0)
                 {
                   Serial.println(val);
@@ -270,29 +272,32 @@ void processCommand(String str)
 //Function to draw lines
 void move()
 {
-  float pos[2];
+  //rationalize(); new function to make coords into steps
+  //based on scaling factors on both axes...
+  long pos[2];
 	//Doing something awesome
 	pos[0] = P1.X-P2.X;
 	pos[1] = P1.Y-P2.Y;
   Serial.println("moving...");
   //ACCEL::
-  //replace the following code
-	sX.setSpeed(P1.F);
-	sY.setSpeed(P1.F);
-	sX.step(mx);
-	sY.step(my);
+  s.moveTo(pos);
+  s.runSpeedToPosition();
+  //Blocks are in position to prevent any hijack
+  //of important control.
 }
 
 //absolute move to coords
-void move(float x, float y)
+void move(long x, long y)
 {
-  float pos[2];
+  //rationalize(); same condition as above...
+  long pos[2];
   pos[0] = x-P2.X;
   pos[1] = y-P2.Y;
   //ACCEL::
-  //replace the following code
-  sX.step(mx);
-  sY.step(my);
+  s.moveTo(pos);
+  s.runSpeedToPosition();
+  //Blocks are in position to prevent any hijack
+  //of important control.
 }
 
 void penUp()
