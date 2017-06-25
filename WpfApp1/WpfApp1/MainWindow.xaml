@@ -1,0 +1,27 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp1"
+        xmlns:System="clr-namespace:System;assembly=mscorlib" x:Class="WpfApp1.MainWindow"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525">
+    <Grid x:Name="g1">
+        <Label x:Name="baud" Content="Baud Rate:" HorizontalAlignment="Left" Height="32" Margin="10,35,0,0" VerticalAlignment="Top" Width="85" FontSize="14"/>
+        <ListBox x:Name="baudList" HorizontalAlignment="Left" Height="30" Margin="100,35,0,0" VerticalAlignment="Top" Width="126" FontSize="14">
+            <System:String>9600</System:String>
+            <System:String>38400</System:String>
+            <System:String>57600</System:String>
+            <System:String>115200</System:String>
+        </ListBox>
+        <Label x:Name="port" Content="PORT:" HorizontalAlignment="Left" Height="32" Margin="10,85,0,0" VerticalAlignment="Top" Width="85" FontSize="14"/>
+        <ListBox x:Name="portList" HorizontalAlignment="Left" Height="30" Margin="100,85,0,0" VerticalAlignment="Top" Width="126"/>
+        <Button x:Name="refresh" Content="Refresh" HorizontalAlignment="Left" Height="27" Margin="433,10,0,0" VerticalAlignment="Top" Width="74" FontSize="14" Click="refresh_Click"/>
+        <Button x:Name="ready" Content="Use" HorizontalAlignment="Left" Height="31" Margin="10,138,0,0" VerticalAlignment="Top" Width="85" FontSize="14" Click="ready_Click"/>
+        <TextBox x:Name="tB1" HorizontalAlignment="Left" Height="29" Margin="443,240,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="64"/>
+        <TextBox x:Name="tB2" HorizontalAlignment="Left" Height="29" Margin="443,280,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="64"/>
+        <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="135" Margin="10,174,0,0" Stroke="Black" VerticalAlignment="Top" Width="428"/>
+        <TextBox x:Name="resTBox" HorizontalAlignment="Left" Height="108" Margin="24,187,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="401"/>
+    </Grid>
+</Window>
