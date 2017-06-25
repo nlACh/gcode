@@ -7,7 +7,7 @@
 #include <String.h>
 
 //version number
-#define VERSION 0.605
+#define VERSION 0.65
 
 //steps per revolution SPR of motors used
 //change this when changing motors
@@ -27,7 +27,9 @@ AccelStepper sY(AccelStepper::FULL4WIRE, 8, 10, 9, 11); //Y axis is the one hngi
 MultiStepper s;
 /**
  * Changing the params of the struct can allow operation in Z axis too
- * We will need z position and another motor/controller.
+ * We will need z position when using another motor with controller.
+ * Having a Z axis is good for 3D printers and CNC
+ * Higher number of motors can be used for CNCs with more axes of movement (apparently they are expensive)
  * Plus an arduino with more I/O pins. It would be awesome to address the motors somehow by I2C
  */
 struct point
