@@ -9,8 +9,8 @@
         Title="GCODE Parser" Height="352" Width="525">
     <Grid x:Name="g1">
         <Grid.RowDefinitions>
-            <RowDefinition Height="240*"/>
-            <RowDefinition Height="79*"/>
+            <RowDefinition Height="226*"/>
+            <RowDefinition Height="95*"/>
         </Grid.RowDefinitions>
         <Label x:Name="baud" Content="Baud Rate:" HorizontalAlignment="Left" Height="32" Margin="10,35,0,0" VerticalAlignment="Top" Width="85" FontSize="14"/>
         <ListBox x:Name="baudList" HorizontalAlignment="Left" Height="30" Margin="100,35,0,0" VerticalAlignment="Top" Width="126" FontSize="14">
@@ -22,16 +22,15 @@
         </ListBox>
         <Label x:Name="port" Content="PORT:" HorizontalAlignment="Left" Height="32" Margin="10,85,0,0" VerticalAlignment="Top" Width="85" FontSize="14"/>
         <ListBox x:Name="portList" HorizontalAlignment="Left" Height="30" Margin="100,85,0,0" VerticalAlignment="Top" Width="126"/>
-        <Button x:Name="help" Content="Help" HorizontalAlignment="Left" Height="27" Margin="433,10,0,0" VerticalAlignment="Top" Width="74" FontSize="14" Click="help_Click"/>
-        <Button x:Name="ready" Content="Select PORT" HorizontalAlignment="Left" Height="31" Margin="10,138,0,0" VerticalAlignment="Top" Width="85" FontSize="14" Click="ready_Click"/>
+        <Button x:Name="help" Content="Help" HorizontalAlignment="Left" Height="27" Margin="433,10,0,0" VerticalAlignment="Top" Width="74" FontSize="14"/>
         <TextBox x:Name="tB1" Visibility="Hidden" HorizontalAlignment="Left" Height="29" Margin="443,0,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="64" Grid.Row="1"/>
         <TextBox x:Name="tB2" Visibility="Hidden" HorizontalAlignment="Left" Height="29" Margin="443,39,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="64" Grid.Row="1"/>
         <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="134" Margin="10,174,0,0" Stroke="Black" VerticalAlignment="Top" Width="428" Grid.RowSpan="2"/>
-        <Button x:Name="fOpen" Content="Select File" HorizontalAlignment="Left" Height="31" Margin="115,138,0,0" VerticalAlignment="Top" Width="85" FontSize="14" Click="fOpen_Click"/>
+        <Button x:Name="fOpen" Content="Select File" HorizontalAlignment="Left" Height="31" Margin="10,138,0,0" VerticalAlignment="Top" Width="85" FontSize="14" Click="fOpen_Click"/>
         <Button x:Name="send" Content="Send" HorizontalAlignment="Left" Height="25" Margin="443,174,0,0" VerticalAlignment="Top" Width="64" Click="send_Click" FontSize="14"/>
         <Button x:Name="refresh" Content="Refresh" HorizontalAlignment="Left" Height="30" Margin="241,85,0,0" VerticalAlignment="Top" Width="54" FontSize="14" Click="refresh_Click"/>
         <TextBox x:Name="resTBox" HorizontalAlignment="Left" Height="50" Margin="364,65,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="115"/>
-        <TextBlock x:Name="gcode" HorizontalAlignment="Left" Height="46" Margin="20,184,0,0" TextWrapping="Wrap" Text="GCODE" VerticalAlignment="Top" Width="408"/>
-        <TextBlock x:Name="return" HorizontalAlignment="Left" Height="46" Margin="20,10,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Return Value" VerticalAlignment="Top" Width="408"/>
+        <TextBlock x:Name="gcode" HorizontalAlignment="Left" Height="32" Margin="20,184,0,0" TextWrapping="Wrap" Text="GCODE" VerticalAlignment="Top" Width="408"/>
+        <TextBlock x:Name="return" HorizontalAlignment="Left" Height="58" Margin="20,10,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Return Value" VerticalAlignment="Top" Width="408"/>
     </Grid>
 </Window>

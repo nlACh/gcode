@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -26,6 +26,7 @@ namespace WpfApp1
         private Int32 _baudRate;
         private String _pName, fileName;
         private Int32 lines = 0, count=0;
+        SerialPort SP;
 
         //Make a list from array
         List<String> gList = new List<String>();
@@ -36,8 +37,15 @@ namespace WpfApp1
             //adds the available COM ports to the list
             foreach (String s in SerialPort.GetPortNames())
                 portList.Items.Add(s);
+            //adding a closing window handler
+            Closing += MainWindow_Closing;
+            //any name will do, just create a new handler method with the same name
         }
 
+        private void MainWindow_Closing(object sender, EventArgs e)
+        {
+            SP.Close();
+        }
         private void refresh_Click(object sender, RoutedEventArgs e)
         {
             /* *
@@ -49,36 +57,26 @@ namespace WpfApp1
                 portList.Items.Add(s);
         }
 
-        //trying if the selected COM port is THE ONE.
-        private void ready_Click(object sender, RoutedEventArgs e)
+        //button to send data
+        private void send_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                String bval = baudList.SelectedItem.ToString();
-                _baudRate = Int32.Parse(bval);
-                _pName = portList.SelectedItem.ToString();
-                tB1.Text = bval;
-                tB2.Text = _pName;
-                _spData(_pName, _baudRate);
-            }
-            catch (Exception ex)
-            {
-                resTBox.AppendText(ex.ToString());
-            }
-
-        }
-
-        /* *
-         * For serial communication with data 
-         * */
-        private void _spData(String s, Int32 x)
-        {
-            var SP = new SerialPort(_pName, _baudRate);
+            
+            String bval = baudList.SelectedItem.ToString();
+            _baudRate = Int32.Parse(bval);
+            _pName = portList.SelectedItem.ToString();
+            tB1.Text = bval;
+            tB2.Text = _pName;
+            SP = new SerialPort(_pName, _baudRate);
             SP.Open();
-            SP.DataReceived += sp_recieve;
-            SP.Close();
-        }
 
+            @return.Text = count.ToString();
+            for (lines = 0; lines < count; lines++)
+            {
+                gcode.Text = gList[lines];
+                SP.WriteLine(gList[lines]);
+                SP.DataReceived += sp_recieve;
+            }
+        }
 
         //creating a delegate
         public delegate void OutputResultDelegate(String myString);
@@ -87,29 +85,19 @@ namespace WpfApp1
         {
             SerialPort _SP = (SerialPort)sender;
             String data = _SP.ReadLine();
-            resTBox.Dispatcher.Invoke(new OutputResultDelegate(setTxt), new Object[] { data });
+            
+            @return.Dispatcher.Invoke(new OutputResultDelegate(setTxt), new Object[] { data });
         }
 
         private void setTxt(String s)
         {
-            resTBox.AppendText(Environment.NewLine + s);
-        }
-
-        //Handler for help button
-        private void help_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        //button to send data
-        private void send_Click(object sender, RoutedEventArgs e)
-        {
-            if(lines<count)
-                gcode.Text = gList[lines++];
+            @return.Text=Environment.NewLine + s;
         }
 
         /* *
-         * This is a Click handler for Send Button 
+         * This is a Click handler for Open Button 
+         * Creates a file picker dialog for picking
+         * the correct files
          * */
         private void fOpen_Click(object sender, RoutedEventArgs e)
         {
@@ -131,6 +119,7 @@ namespace WpfApp1
                             gList.Add(fReader.ReadLine());
                         }
                         fReader.Close();
+                        //getting a count of the total number of lines
                         count = gList.Count;
                     }
                 }
