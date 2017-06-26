@@ -13,7 +13,7 @@
 //change this when changing motors
 #define SPR 64
 
-#define BAUD 115200 //define speed of communication
+#define BAUD 9600 //define speed of communication
 #define MAX_BUF 64 //max length of message arduino can store
 
 char buffer[MAX_BUF];
@@ -185,6 +185,7 @@ void processCommand(String str)
                //Serial.println(P1.Y);
                //Serial.println(P1.F);
 			         //get some function to draw/move the header
+               Serial.println("!");
 			         break;
 
       case 01: in1.cx=str.indexOf('X');
@@ -212,13 +213,15 @@ void processCommand(String str)
                Serial.println(P);
                Serial.print("waiting for ");
                delay(d);
-               Serial.println(d);
+               Serial.println("!");
                break;
 
       case 90: Serial.print("abs\n");
+               Serial.println("!");
                break;
                
       case 91: Serial.print("rel\n");
+               Serial.println("!");
                break;
 
       case 92: in1.cx=str.indexOf('X');
@@ -226,6 +229,7 @@ void processCommand(String str)
                P1.X=str.substring(in1.cx+1, in1.cy).toInt();
                P1.Y=str.substring(in1.cy+1, in1.cf).toInt();
                move(P1.X,P1.Y);
+               Serial.println("!");
                break;
     }
   }
@@ -241,9 +245,11 @@ void processCommand(String str)
                 for(long j=8; j<=11; j++)
                   digitalWrite(j,LOW);
                 disabled=true;
+                Serial.println("!");
                 break;
 
       case 100: help();
+                Serial.println("!");
                 break;
 
       case 114: Serial.println("I am at: ");
@@ -252,6 +258,7 @@ void processCommand(String str)
                 Serial.println(P1.Y);
                 Serial.print("Feedrate: ");
                 Serial.println(P1.F);
+                Serial.println("!");
                 break;
 
       case 300: Serial.println("Pen UP/DOWN");
@@ -267,6 +274,8 @@ void processCommand(String str)
                   Serial.println(val);
                   penDown();                
                 }
+                Serial.println("!");
+                break;
     }
   }
 }
@@ -286,6 +295,7 @@ void move()
   s.runSpeedToPosition();
   //Blocks are in position to prevent any hijack
   //of important control.
+  Serial.println("!");
 }
 
 //absolute move to coords
@@ -300,6 +310,7 @@ void move(long x, long y)
   s.runSpeedToPosition();
   //Blocks are in position to prevent any hijack
   //of important control.
+  Serial.println("!");
 }
 
 void penUp()
