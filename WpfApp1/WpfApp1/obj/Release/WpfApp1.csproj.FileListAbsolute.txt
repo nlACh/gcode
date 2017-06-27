@@ -1,0 +1,19 @@
+C:\Users\nlpl9\OneDrive\Documents\Arduino\gcode\WpfApp1\WpfApp1\bin\Release\GCODE Parser.exe.config
+C:\Users\nlpl9\OneDrive\Documents\Arduino\gcode\WpfApp1\WpfApp1\bin\Release\GCODE Parser.exe.manifest
+C:\Users\nlpl9\OneDrive\Documents\Arduino\gcode\WpfApp1\WpfApp1\bin\Release\GCODE Parser.application
+C:\Users\nlpl9\OneDrive\Documents\Arduino\gcode\WpfApp1\WpfApp1\bin\Release\GCODE Parser.exe
+C:\Users\nlpl9\OneDrive\Documents\Arduino\gcode\WpfApp1\WpfApp1\bin\Release\GCODE Parser.pdb
+C:\Users\nlpl9\OneDrive\Documents\Arduino\gcode\WpfApp1\WpfApp1\obj\Release\WpfApp1.csprojResolveAssemblyReference.cache
+C:\Users\nlpl9\OneDrive\Documents\Arduino\gcode\WpfApp1\WpfApp1\obj\Release\MainWindow.g.cs
+C:\Users\nlpl9\OneDrive\Documents\Arduino\gcode\WpfApp1\WpfApp1\obj\Release\App.g.cs
+C:\Users\nlpl9\OneDrive\Documents\Arduino\gcode\WpfApp1\WpfApp1\obj\Release\GCODE Parser_MarkupCompile.cache
+C:\Users\nlpl9\OneDrive\Documents\Arduino\gcode\WpfApp1\WpfApp1\obj\Release\GCODE Parser_MarkupCompile.lref
+C:\Users\nlpl9\OneDrive\Documents\Arduino\gcode\WpfApp1\WpfApp1\obj\Release\MainWindow.baml
+C:\Users\nlpl9\OneDrive\Documents\Arduino\gcode\WpfApp1\WpfApp1\obj\Release\GCODE Parser.g.resources
+C:\Users\nlpl9\OneDrive\Documents\Arduino\gcode\WpfApp1\WpfApp1\obj\Release\GCODE_parse.Properties.Resources.resources
+C:\Users\nlpl9\OneDrive\Documents\Arduino\gcode\WpfApp1\WpfApp1\obj\Release\WpfApp1.csproj.GenerateResource.Cache
+C:\Users\nlpl9\OneDrive\Documents\Arduino\gcode\WpfApp1\WpfApp1\obj\Release\GCODE Parser.TrustInfo.xml
+C:\Users\nlpl9\OneDrive\Documents\Arduino\gcode\WpfApp1\WpfApp1\obj\Release\GCODE Parser.exe.manifest
+C:\Users\nlpl9\OneDrive\Documents\Arduino\gcode\WpfApp1\WpfApp1\obj\Release\GCODE Parser.application
+C:\Users\nlpl9\OneDrive\Documents\Arduino\gcode\WpfApp1\WpfApp1\obj\Release\GCODE Parser.exe
+C:\Users\nlpl9\OneDrive\Documents\Arduino\gcode\WpfApp1\WpfApp1\obj\Release\GCODE Parser.pdb

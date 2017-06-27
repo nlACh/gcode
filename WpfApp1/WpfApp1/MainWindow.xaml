@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:WpfApp1"
         xmlns:System="clr-namespace:System;assembly=mscorlib" x:Class="WpfApp1.MainWindow"
         mc:Ignorable="d"
-        Title="GCODE Parser" Height="352" Width="525">
+        Title="GCODE Parser" Height="352" Width="525" Closing="MainWindow_Closing">
     <Grid x:Name="g1">
         <Grid.RowDefinitions>
             <RowDefinition Height="226*"/>
@@ -26,11 +26,12 @@
         <TextBox x:Name="tB1" Visibility="Hidden" HorizontalAlignment="Left" Height="29" Margin="443,0,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="64" Grid.Row="1"/>
         <TextBox x:Name="tB2" Visibility="Hidden" HorizontalAlignment="Left" Height="29" Margin="443,39,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="64" Grid.Row="1"/>
         <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="134" Margin="10,174,0,0" Stroke="Black" VerticalAlignment="Top" Width="428" Grid.RowSpan="2"/>
-        <Button x:Name="fOpen" Content="Select File" HorizontalAlignment="Left" Height="31" Margin="10,138,0,0" VerticalAlignment="Top" Width="85" FontSize="14" Click="fOpen_Click"/>
+        <Button x:Name="fOpen" Content="Select File" HorizontalAlignment="Left" Height="31" Margin="112,138,0,0" VerticalAlignment="Top" Width="85" FontSize="14" Click="fOpen_Click"/>
         <Button x:Name="send" Content="Send" HorizontalAlignment="Left" Height="25" Margin="443,174,0,0" VerticalAlignment="Top" Width="64" Click="send_Click" FontSize="14"/>
-        <Button x:Name="refresh" Content="Refresh" HorizontalAlignment="Left" Height="30" Margin="241,85,0,0" VerticalAlignment="Top" Width="54" FontSize="14" Click="refresh_Click"/>
-        <TextBox x:Name="resTBox" HorizontalAlignment="Left" Height="50" Margin="364,65,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="115"/>
+        <Button x:Name="refresh" Content="Refresh" HorizontalAlignment="Left" Height="30" Margin="231,85,0,0" VerticalAlignment="Top" Width="54" FontSize="14" Click="refresh_Click"/>
+        <TextBox x:Name="resTBox" HorizontalAlignment="Left" Height="127" Margin="290,42,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="217"/>
         <TextBlock x:Name="gcode" HorizontalAlignment="Left" Height="32" Margin="20,184,0,0" TextWrapping="Wrap" Text="GCODE" VerticalAlignment="Top" Width="408"/>
-        <TextBlock x:Name="return" HorizontalAlignment="Left" Height="58" Margin="20,10,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Return Value" VerticalAlignment="Top" Width="408"/>
+        <TextBox x:Name="return" HorizontalAlignment="Left" Height="58" Margin="20,10,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Return Value" VerticalAlignment="Top" Width="408"/>
+        <Button x:Name="open" Content="Open PORT" HorizontalAlignment="Left" Height="31" Margin="10,138,0,0" VerticalAlignment="Top" Width="85" FontSize="14" Click="open_Click"/>
     </Grid>
 </Window>

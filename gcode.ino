@@ -1,8 +1,11 @@
 #include <AccelStepper.h>
+#include "rationalize.h"
 //search for modified code with ACCEL::
 //Switching to AccelStepper library
 //hoping to control 2 motors simultaneously...
-#include <MultiStepper.h>//this baby can handle upto 10 motors
+#include <MultiStepper.h>
+//this baby can handle upto 10 motors
+
 #include <Servo.h>
 #include <String.h>
 
@@ -20,11 +23,13 @@ char buffer[MAX_BUF];
 long sofar=0, i=0; //how much is in the buffer
 //a check to disable motors
 bool disabled=false;
+
 //ACCEL::
 AccelStepper sX(AccelStepper::FULL4WIRE, 2, 4, 3, 5); //X axis is the one woefully lying on the ground apparently
 AccelStepper sY(AccelStepper::FULL4WIRE, 8, 10, 9, 11); //Y axis is the one hnging on the beams
 
 MultiStepper s;
+
 /**
  * Changing the params of the struct can allow operation in Z axis too
  * We will need z position when using another motor with controller.
@@ -34,10 +39,11 @@ MultiStepper s;
  */
 struct point
 {
-  long X;
-  long Y;
-  long F;
+  float X;
+  float Y;
 };
+
+
 
 struct index
 {
@@ -47,7 +53,6 @@ struct index
 };
 
 point P1;
-
 /**P2 will store the previous values
 steps required will be calculated w.r.t P2
 P2 initialized with 0,0,0 */
@@ -67,14 +72,13 @@ void setup()
    */
   P2.X=0.0;
   P2.Y=0.0;
-  P2.F=0;
   Serial.begin(BAUD);
   //configure each stepper
   //ACCEL::
   sX.setMaxSpeed(100);
-  //sX.setAcceleration(60);
+  sX.setAcceleration(60);
   sY.setMaxSpeed(100);
-  //sY.setAcceleration(60);
+  sY.setAcceleration(60);
   //ACCEL::
   //Give the steppers to multiStepper to manage
   s.addStepper(sX);
@@ -82,6 +86,7 @@ void setup()
   //more later
   help();
   sready();
+
   /**
    * An absolute move function to move header to
    * desired coords, including origin
@@ -93,6 +98,7 @@ void setup()
 /**
  * After setup() this machine will repeat loop() forever.
  */
+
 void loop() 
 {
   // listen for commands
@@ -100,24 +106,21 @@ void loop()
   { 
 	// if something is available
     char c = Serial.read(); // get it
-    Serial.print(c); // optional: repeat back what I got for debugging
-		
+    //Serial.print(c); // optional: repeat back what I got for debugging
     // store the byte as long as there's room in the buffer.
     // if the buffer is full some data might get lost
     if(sofar < MAX_BUF) 
-		buffer[sofar++]=c;
+		  buffer[sofar++]=c;
 	else
 	{
 		Serial.print(F("Buffer Overflow!!"));
 		sready();
 		break;
 	}
-	
 	// if we got a return character (\n) the message is done.
-	if(c==';')
+	if(c==';' || c=='\n')
 	{
-      Serial.print(F("\r\n")); // optional: send back a return for debugging
-
+      //Serial.print(F("\r\n")); // optional: send back a return for debugging
       // strings must end with a \0.
       buffer[sofar-1]=0;
       String cmd = String(buffer);
@@ -151,9 +154,11 @@ void sready()
  *this move() function.(See way down the code to understand...)
  */
 
+
 /**
  * display helpful information
  */
+
 void help() 
 {
   Serial.print(F("CNC Robot "));
@@ -175,25 +180,23 @@ void help()
 void processCommand(String str)
 {
   //Looking for commands that start with G:
-  if(str.charAt(0)=='G' || str.charAt(0)=='g')
+  if(str.charAt(0)=='G')
   {
     long c1=str.substring(1,3).toInt();
-    //long P,d; //for pause since we cannot declare variables in switch cases
+    //long P,d; //for pause since we cannot declare variables in switch case
     switch(c1)
     {
       case 00: //Serial.println(P1.X);
                //Serial.println(P1.Y);
                //Serial.println(P1.F);
 			         //get some function to draw/move the header
-               Serial.println("!");
 			         break;
 
       case 01: in1.cx=str.indexOf('X');
                in1.cy=str.indexOf('Y');
                in1.cf=str.indexOf('F');
-               P1.X=str.substring(in1.cx+1, in1.cy).toInt();
-               P1.Y=str.substring(in1.cy+1, in1.cf).toInt();
-               P1.F=str.substring(in1.cf+1).toInt();
+               P1.X=str.substring(in1.cx+1, in1.cy).toFloat();
+               P1.Y=str.substring(in1.cy+1, in1.cf).toFloat();
 			         move();
 			         //gets the coords into P2 for reference in next steps
 			         P2=P1;
@@ -206,35 +209,31 @@ void processCommand(String str)
                break;
 
       case 04: long P,d;
-               Serial.println("Wait");
                P=str.indexOf('P');
                d = str.substring(P+1).toInt();
-               Serial.print("P at... ");
-               Serial.println(P);
+               //Serial.print("P at... ");
+               //Serial.println(P);
                Serial.print("waiting for ");
+               Serial.println(d);
                delay(d);
-               Serial.println("!");
                break;
 
       case 90: Serial.print("abs\n");
-               Serial.println("!");
                break;
-               
+
       case 91: Serial.print("rel\n");
-               Serial.println("!");
                break;
 
       case 92: in1.cx=str.indexOf('X');
                in1.cy=str.indexOf('Y');
-               P1.X=str.substring(in1.cx+1, in1.cy).toInt();
-               P1.Y=str.substring(in1.cy+1, in1.cf).toInt();
+               P1.X=str.substring(in1.cx+1, in1.cy).toFloat();
+               P1.Y=str.substring(in1.cy+1, in1.cf).toFloat();
                move(P1.X,P1.Y);
-               Serial.println("!");
                break;
     }
   }
-  
-  if(str.charAt(0)=='M' || str.charAt(0)=='m')
+
+  if(str.charAt(0)=='M')
   {
     long c1=str.substring(1,4).toInt();
     switch(c1)
@@ -245,20 +244,15 @@ void processCommand(String str)
                 for(long j=8; j<=11; j++)
                   digitalWrite(j,LOW);
                 disabled=true;
-                Serial.println("!");
                 break;
 
       case 100: help();
-                Serial.println("!");
                 break;
-
+                
       case 114: Serial.println("I am at: ");
                 Serial.print(P1.X);
                 Serial.print(',');
                 Serial.println(P1.Y);
-                Serial.print("Feedrate: ");
-                Serial.println(P1.F);
-                Serial.println("!");
                 break;
 
       case 300: Serial.println("Pen UP/DOWN");
@@ -274,8 +268,6 @@ void processCommand(String str)
                   Serial.println(val);
                   penDown();                
                 }
-                Serial.println("!");
-                break;
     }
   }
 }
@@ -285,32 +277,30 @@ void move()
 {
   //rationalize(); new function to make coords into steps
   //based on scaling factors on both axes...
-  long pos[2];
+  float pos[2];
 	//Doing something awesome
 	pos[0] = P1.X-P2.X;
 	pos[1] = P1.Y-P2.Y;
-  Serial.println("moving...");
+  //Serial.println("moving...");
   //ACCEL::
-  s.moveTo(pos);
-  s.runSpeedToPosition();
+  //s.moveTo(pos);
+  //s.runSpeedToPosition();
   //Blocks are in position to prevent any hijack
   //of important control.
-  Serial.println("!");
 }
 
 //absolute move to coords
-void move(long x, long y)
+void move(float x, float y)
 {
   //rationalize(); same condition as above...
-  long pos[2];
+  float pos[2];
   pos[0] = x-P2.X;
   pos[1] = y-P2.Y;
   //ACCEL::
-  s.moveTo(pos);
-  s.runSpeedToPosition();
+  //s.moveTo(pos);
+  //s.runSpeedToPosition();
   //Blocks are in position to prevent any hijack
   //of important control.
-  Serial.println("!");
 }
 
 void penUp()

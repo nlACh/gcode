@@ -1,19 +1,19 @@
-﻿WpfApp1
+﻿GCODE Parser
 
 
 winexe
 C#
 .cs
-C:\Users\nlpl9\OneDrive\Documents\Arduino\gcode\WpfApp1\WpfApp1\obj\Debug\
-WpfApp1
+C:\Users\nlpl9\OneDrive\Documents\Arduino\gcode\WpfApp1\WpfApp1\obj\Release\
+GCODE_parse
 none
 false
-DEBUG;TRACE
+TRACE
 C:\Users\nlpl9\OneDrive\Documents\Arduino\gcode\WpfApp1\WpfApp1\App.xaml
 11151548125
 
-71963009584
-15767094614
+91753735965
+151270957945
 MainWindow.xaml;
 
 False
